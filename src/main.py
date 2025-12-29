@@ -6,6 +6,7 @@ from dataset import get_dataloaders
 from model import get_resnet18
 from train import train_model
 from evaluate import evaluate_model
+from model import get_mobilenet_v2
 
 
 DATA_DIR = "data/raw"
@@ -32,10 +33,10 @@ model = train_model(
     EPOCHS
 )
 
-print("\nValidation Results:")
+print("\nResnet Validation Results:")
 evaluate_model(model, val_loader, classes, device)
 
-print("\nTest Results:")
+print("\nResnet Test Results:")
 evaluate_model(model, test_loader, classes, device)
 
 
@@ -44,3 +45,30 @@ import os
 os.makedirs("results", exist_ok=True)
 torch.save(model.state_dict(), "results/fingerprint_classifier.pth")
 print("Model saved to results/fingerprint_classifier.pth")
+
+mobilenet = get_mobilenet_v2(len(classes))
+mobilenet = mobilenet.to(device)
+
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(mobilenet.parameters(), lr=1e-4)
+
+mobilenet = train_model(
+    mobilenet,
+    train_loader,
+    criterion,
+    optimizer,
+    device,
+    EPOCHS
+)
+
+print("\nMobileNet Validation Results:")
+evaluate_model(mobilenet, val_loader, classes, device)
+
+print("\nMobileNet Test Results:")
+evaluate_model(mobilenet, test_loader, classes, device)
+
+torch.save(
+    mobilenet.state_dict(),
+    "results/mobilenet_v2.pth"
+)
+print("MobileNet model saved to results/mobilenet_v2.pth")
