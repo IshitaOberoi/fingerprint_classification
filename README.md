@@ -47,7 +47,6 @@ All models are initialized with ImageNet pretrained weights and fine-tuned on th
 - **Libraries & Tools:**
   - torchvision
   - NumPy
-  - OpenCV
   - Matplotlib
   - scikit-learn
 - **Techniques:**
